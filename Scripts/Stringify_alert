@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'osx/cocoa'
+
+d = OSX::NSDictionary.dictionaryWithContentsOfFile ARGV[0]
+raise "Could not load file at #{ARGV[0]}" unless d
+
+strings = OSX::NSMutableDictionary.new
+
+if d['L0AlertButtons']
+	d['L0AlertButtons'].each { |b| strings[b] = b }
+end
+
+x = d['L0AlertInformativeText']
+strings[x] = x if x
+
+x = d['L0AlertMessageText']
+strings[x] = x if x
+
+File.open(ARGV[1], "w") do |io|
+	io << strings.descriptionInStringsFileFormat.to_s
+end

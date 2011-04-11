@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ ! -d "$1" -o ! -d "$2" ]; then
+	echo "Usage: $0 <directory with resources> <target directory>"
+fi
+
+HERE="`dirname "$0"`"
+
+mkdir -p "$2"/Strings
+for i in "$1"/*.strings; do
+	cp "$i" "$2"/Strings/
+done
+
+mkdir -p "$2"/XIBs
+for i in "$1"/*.xib; do
+	ILABS_XIB_NAME="`basename "$i"`"
+	ibtool --export-strings-file "$2"/XIBs/"$ILABS_XIB_NAME".strings "$i"
+done
+
+mkdir -p "$2"/Alerts
+for i in "$1"/*.alert; do
+	ILABS_ALERT_NAME="`basename "$i"`"
+	"$HERE"/Stringify_alert "$i" "$2"/Alerts/"$ILABS_ALERT_NAME".strings
+done
