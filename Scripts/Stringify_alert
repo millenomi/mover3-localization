@@ -14,7 +14,7 @@ end
 x = d['L0AlertInformativeText']
 strings[x] = x if x
 
-x = d['L0AlertMessageText']
+x = d['L0AlertMessage']
 strings[x] = x if x
 
 File.open(ARGV[1], "w") do |io|
