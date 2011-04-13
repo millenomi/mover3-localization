@@ -1,3 +1,3 @@
-"Dismiss" = "Dismiss";
-"An item of a type Mover doesn't know was received. It was kept it in its original package." = "An item of a type Mover doesn't know was received. It was kept it in its original package.";
-"You can open it with another app, if you installed one that can open this kind of item." = "You can open it with another app, if you installed one that can open this kind of item.";
+"Dismiss" = "Chiudi";
+"An item of a type Mover doesn't know was received. It was kept it in its original package." = "È stato ricevuto un elemento di un tipo sconosciuto. Il pacchetto dell'elemento è rimasto chiuso.";
+"You can open it with another app, if you installed one that can open this kind of item." = "Può essere aperto utilizzando un'app diversa da Mover, se ne hai installata una in grado di aprirlo.";
