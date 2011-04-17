@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+ORIGINAL_ALERT_FILE = ARGV[0]
+STRINGS_FILE = ARGV[1]
+TARGET_ALERT_FILE = ARGV[2]
+
+SHOULD_IGNORE_UNLOCALIZED_FILES = ENV['ILABS_IGNORE_UNLOCALIZED_FILES'] == 'YES'
+
+def die_with_ignorable_error x
+	if SHOULD_IGNORE_UNLOCALIZED_FILES
+		$stderr.puts 'warning: ignoring error: ' + x
+		exit 0
+	else
+		raise x
+	end
+end
+
+require 'osx/cocoa'
+include OSX
+
+original_data = NSData.dataWithContentsOfFile ORIGINAL_ALERT_FILE
+raise "Can't read original alert file #{ORIGINAL_ALERT_FILE}" unless original_data
+
+original = NSPropertyListSerialization.propertyListWithData_options_format_error(original_data, OSX::NSPropertyListMutableContainersAndLeaves, nil, nil)
+die_with_ignorable_error "Can't parse property list in original alert file #{ORIGINAL_ALERT_FILE}" unless original
+
+strings = NSDictionary.dictionaryWithContentsOfFile STRINGS_FILE
+die_with_ignorable_error "Can't parse strings file #{STRINGS_FILE}" unless strings
+
+# ----------------------------------
+
+info = original['L0AlertInformativeText']
+if info and strings[info]
+	original['L0AlertInformativeText'] = strings[info]
+end
+
+info = original['L0AlertMessage']
+if info and strings[info]
+	original['L0AlertMessage'] = strings[info]
+end
+
+if original['L0AlertButtons']
+	i = 0
+	original['L0AlertButtons'].dup.each do |b|
+		b = strings[b] if strings[b]
+		original['L0AlertButtons'][i] = b
+		i += 1
+	end
+end
+
+NSPropertyListSerialization.\
+	dataWithPropertyList_format_options_error(
+		original, NSPropertyListBinaryFormat_v1_0, 0, nil
+	).\
+	writeToFile_atomically(TARGET_ALERT_FILE, true)
+	

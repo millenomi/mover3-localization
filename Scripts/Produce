@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ ! -d "$1" -o ! -d "$2" -o ! -d "$3" ]; then
+	echo "Usage: $0 <directory with original resources> <directory with strings> <target directory>"
+	exit 1
+fi
+
+HERE="`dirname "$0"`"
+
+ORIGINAL="$1"
+TRANSLATED="$2"
+TARGET="$3"
+
+for ORIGINAL_STRINGS_FILE in "$ORIGINAL"/*.strings; do
+	cp "$TRANSLATED"/Strings/"`basename "$ORIGINAL_STRINGS_FILE"`" "$TARGET"/
+done
+
+for ORIGINAL_XIB_FILE in "$ORIGINAL"/*.xib; do
+	BASENAME="`basename "$ORIGINAL_XIB_FILE" .xib`"
+	
+	STRINGS_FILE="$TRANSLATED"/XIBs/"$BASENAME".xib.strings
+	TARGET_NIB_FILE="$TARGET"/"$BASENAME".nib
+	
+	ibtool --compile "$TARGET_NIB_FILE" --import-strings-file "$STRINGS_FILE" "$ORIGINAL_XIB_FILE"
+done
+
+for ORIGINAL_ALERT_FILE in "$ORIGINAL"/*.alert; do
+	BASENAME="`basename "$ORIGINAL_ALERT_FILE"`"
+	
+	TARGET_ALERT_FILE="$TARGET"/"$BASENAME"
+	STRINGS_FILE="$TRANSLATED"/Alerts/"$BASENAME".strings
+	
+	"$HERE"/Produce_alert "$ORIGINAL_ALERT_FILE" "$STRINGS_FILE" "$TARGET_ALERT_FILE"
+done
