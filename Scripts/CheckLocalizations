@@ -50,11 +50,11 @@ LANGUAGES.each do |lang|
 		
 		if errors.length > 0
 			has_errors = true
-			$stderr.puts errors.map { |x| "error: #{translated_file}: #{x}" }.join("\n")
+			$stderr.puts errors.map { |x| "error: #{translated_file}\nerror: #{x}" }.join("\n")
 		end
 		
 		if warnings.length > 0
-			$stderr.puts warnings.map { |x| "warning: #{translated_file}: #{x}" }.join("\n")
+			$stderr.puts warnings.map { |x| "note: #{translated_file}\nnote: #{x}" }.join("\n")
 		end
 	end
 end
