@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'find'
+require 'osx/cocoa'
+include OSX
+
+FROM = File.join(File.dirname(__FILE__), '../iOS/en.lproj')
+DEFAULT_LANGUAGES = 'it'
+LANGUAGES = (ENV['LOCALE_CODES'] || DEFAULT_LANGUAGES).split(' ')
+
+Dir.chdir FROM
+
+has_errors = false
+
+LANGUAGES.each do |lang|
+	Find.find '.' do |path|
+		next unless path =~ /\.strings$/
+	
+		errors = []
+		warnings = []
+	
+		original_file = path
+		translated_file = File.expand_path File.join("../#{lang}.lproj", path)
+	
+		original = NSDictionary.dictionaryWithContentsOfFile original_file
+		translated = NSDictionary.dictionaryWithContentsOfFile translated_file
+		
+		if original and translated
+	
+			original.allKeys.each do |key|
+				key = key.to_s
+				errors << "key '#{key}' not in translated file." if not translated[key]
+				warnings << "key '#{key}' seems to be not localized (value: '#{translated[key]}')" if translated[key] == original[key]
+			end
+	
+			translated.allKeys.each do |key|
+				key = key.to_s
+				warnings << "key '#{key}' is in translated file but not in original" unless original[key]
+			end
+		
+		end
+		
+		if not original
+			errors << "can't open original file #{original_file} for reading"
+		end
+		
+		if not translated
+			errors << "can't open translated file #{translated_file} for reading"
+		end
+		
+		if errors.length > 0
+			has_errors = true
+			$stderr.puts errors.map { |x| "error: #{translated_file}: #{x}" }.join("\n")
+		end
+		
+		if warnings.length > 0
+			$stderr.puts warnings.map { |x| "warning: #{translated_file}: #{x}" }.join("\n")
+		end
+	end
+end
+
+exit 1 if has_errors

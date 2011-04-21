@@ -1,5 +1,5 @@
 "You can review the received contact to add its data to another one, or save it as an entirely new address card." = "Puoi rivedere il contatto ricevuto per unire i suoi dati ad un altro già esistente, o salvarlo come un nuovo contatto.";
 "Don't save" = "Non salvare";
 "Save as new" = "Salva nuovo";
-"\\U201c%@\\U201d was received, but seems to be already in your address book." = "Ho ricevuto \\U201c%@\\U201d, che sembra già aggiunto ai tuoi contatti.";
+"“%@” was received, but seems to be already in your address book." = "Ho ricevuto \\U201c%@\\U201d, che sembra già aggiunto ai tuoi contatti.";
 "Review" = "Rivedi";
